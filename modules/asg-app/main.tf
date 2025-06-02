@@ -1,27 +1,13 @@
-resource "aws_launch_template" "lt_name" {
-  name          = "${var.project_name}-tpl"
-  image_id      = var.ami
-  instance_type = var.cpu
-  key_name      = var.key_name
-  user_data     = filebase64("../modules/asg/config.sh")
+resource "aws_autoscaling_group" "asg_app" {
 
-
-  vpc_security_group_ids = [var.client_sg_id]
-  tags = {
-    Name = "${var.project_name}-tpl"
-  }
-}
-
-resource "aws_autoscaling_group" "asg_name" {
-
-  name                      = "${var.project_name}-asg"
+  name                      = "${var.project_name}-asg-app"
   max_size                  = var.max_size
   min_size                  = var.min_size
-  desired_capacity          = var.desired_cap
+  desired_capacity          = var.desired_capacity
   health_check_grace_period = 300
-  health_check_type         = var.asg_health_check_type #"ELB" or default EC2
-  vpc_zone_identifier = [var.pri_sub_3a_id,var.pri_sub_4b_id]
-  target_group_arns   = [var.tg_arn] #var.target_group_arns
+  health_check_type         = var.asg_health_check_type
+  vpc_zone_identifier       = [var.app_subnet_1a_id, var.app_subnet_1b_id]
+  target_group_arns         = [var.app_alb_tg_arn]
 
   enabled_metrics = [
     "GroupMinSize",
@@ -34,15 +20,15 @@ resource "aws_autoscaling_group" "asg_name" {
   metrics_granularity = "1Minute"
 
   launch_template {
-    id      = aws_launch_template.lt_name.id
-    version = aws_launch_template.lt_name.latest_version 
+    id      = var.app_launch_template.id
+    version = var.app_launch_template.latest_version
   }
 }
 
 # scale up policy
 resource "aws_autoscaling_policy" "scale_up" {
   name                   = "${var.project_name}-asg-scale-up"
-  autoscaling_group_name = aws_autoscaling_group.asg_name.name
+  autoscaling_group_name = aws_autoscaling_group.asg_app.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = "1" #increasing instance by 1 
   cooldown               = "300"
@@ -60,9 +46,9 @@ resource "aws_cloudwatch_metric_alarm" "scale_up_alarm" {
   namespace           = "AWS/EC2"
   period              = "120"
   statistic           = "Average"
-  threshold           = "70" # New instance will be created once CPU utilization is higher than 30 %
+  threshold           = "70" # New instance will be created once CPU utilization is higher than 70 %
   dimensions = {
-    "AutoScalingGroupName" = aws_autoscaling_group.asg_name.name
+    "AutoScalingGroupName" = aws_autoscaling_group.asg_app.name
   }
   actions_enabled = true
   alarm_actions   = [aws_autoscaling_policy.scale_up.arn]
@@ -71,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "scale_up_alarm" {
 # scale down policy
 resource "aws_autoscaling_policy" "scale_down" {
   name                   = "${var.project_name}-asg-scale-down"
-  autoscaling_group_name = aws_autoscaling_group.asg_name.name
+  autoscaling_group_name = aws_autoscaling_group.asg_app.name
   adjustment_type        = "ChangeInCapacity"
   scaling_adjustment     = "-1" # decreasing instance by 1 
   cooldown               = "300"
@@ -88,9 +74,9 @@ resource "aws_cloudwatch_metric_alarm" "scale_down_alarm" {
   namespace           = "AWS/EC2"
   period              = "120"
   statistic           = "Average"
-  threshold           = "5" # Instance will scale down when CPU utilization is lower than 5 %
+  threshold           = "25" # Instance will scale down when CPU utilization is lower than 25 %
   dimensions = {
-    "AutoScalingGroupName" = aws_autoscaling_group.asg_name.name
+    "AutoScalingGroupName" = aws_autoscaling_group.asg_app.name
   }
   actions_enabled = true
   alarm_actions   = [aws_autoscaling_policy.scale_down.arn]

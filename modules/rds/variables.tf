@@ -1,11 +1,10 @@
-variable "db_sg_id" {}
-variable "pri_sub_5a_id" {}
-variable "pri_sub_6b_id" {}
+variable "vpc_id" {}
+variable "project_name" {}
+variable "environment" {}
+variable "db_sg" {}
+variable "db_subnets" {}
 variable "db_username" {}
 variable "db_password" {}
-variable "db_sub_name" {
-    default = "book-shop-db-subnet-a-b"
-}
 variable "db_name" {
-    default = "testdb"
+  default = "symbiosismysqldb"
 }

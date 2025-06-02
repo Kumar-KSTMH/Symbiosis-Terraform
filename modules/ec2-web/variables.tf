@@ -1,0 +1,10 @@
+variable "project_name" {}
+variable "environment" {}
+variable "ami_id" {}
+variable "instance_type" {}
+variable "web_subnet_1a_id" {}
+variable "web_subnet_1b_id" {}
+variable "web_sg" {}
+variable "key_name" {}
+variable "app_alb_dns_name" {}
+variable "iam_instance_profile_name" {}

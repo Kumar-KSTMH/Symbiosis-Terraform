@@ -1,4 +1,9 @@
-resource "aws_key_pair" "client_key" {
-    key_name = "client_key"
-    public_key = file("../modules/key/client_key.pub")
+resource "aws_key_pair" "key" {
+  key_name   = "${var.project_name}-${var.environment}-client-key"
+  public_key = file(var.public_key_path)
+
+  tags = {
+    Project     = var.project_name
+    Environment = var.environment
+  }
 }
