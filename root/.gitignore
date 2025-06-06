@@ -13,7 +13,7 @@
 terraform.*
 *.tfvars*
 .gitattributes
-../../.gitattributes
+../modules/.gitattributes
 # .tfstate files
 *.tfstate
 /**/*.tfstate*
