@@ -8,3 +8,7 @@ variable "web_sg" {}
 variable "key_name" {}
 variable "app_alb_dns_name" {}
 variable "iam_instance_profile_name" {}
+variable "ebs_kms_key_arn" {
+  description = "KMS key ARN for EC2 EBS volumes"
+  type        = string
+}

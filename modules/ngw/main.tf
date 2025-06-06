@@ -1,17 +1,17 @@
 # allocate elastic ip. this eip will be used for the nat-gateway in the web subnet 1a
 resource "aws_eip" "eip_nat_1a" {
- domain   = "vpc"
+  domain = "vpc"
 
-  tags   = {
+  tags = {
     Name = "eip-nat-a"
   }
 }
 
 # allocate elastic ip. this eip will be used for the nat-gateway in the web subnet 1b
 resource "aws_eip" "eip_nat_1b" {
-  domain   = "vpc"
+  domain = "vpc"
 
-  tags   = {
+  tags = {
     Name = "eip-nat-b"
   }
 }
@@ -22,7 +22,7 @@ resource "aws_nat_gateway" "nat_web_subnet_1a" {
   allocation_id = aws_eip.eip_nat_1a.id
   subnet_id     = var.web_subnet_1a_id
 
-  tags   = {
+  tags = {
     Name = "ngw-web-subnet-1a"
   }
 
@@ -36,7 +36,7 @@ resource "aws_nat_gateway" "nat_web_subnet_1b" {
   allocation_id = aws_eip.eip_nat_1b.id
   subnet_id     = var.web_subnet_1b_id
 
-  tags   = {
+  tags = {
     Name = "ngw-web-subnet-1b"
   }
 

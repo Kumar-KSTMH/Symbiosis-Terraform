@@ -8,3 +8,8 @@ variable "db_password" {}
 variable "db_name" {
   default = "symbiosismysqldb"
 }
+variable "rds_kms_key_arn" {
+  description = "KMS key ARN for RDS"
+  type        = string
+}
+

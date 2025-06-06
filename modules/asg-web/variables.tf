@@ -5,8 +5,8 @@ variable "web_alb_tg_arn" {}
 variable "web_launch_template" {
   description = "Web tier launch template object"
   type = object({
-    id              = string
-    latest_version  = string
+    id             = string
+    latest_version = string
   })
 }
 

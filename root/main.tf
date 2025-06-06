@@ -32,14 +32,15 @@ module "sg" {
 # creating RDS instance
 
 module "rds" {
-  source       = "../modules/rds"
-  vpc_id       = module.vpc.vpc_id
-  project_name = var.project_name
-  environment  = var.environment
-  db_sg        = module.sg.db_sg
-  db_subnets   = module.vpc.db_subnets
-  db_username  = var.db_username
-  db_password  = var.db_password
+  source          = "../modules/rds"
+  vpc_id          = module.vpc.vpc_id
+  project_name    = var.project_name
+  environment     = var.environment
+  db_sg           = module.sg.db_sg
+  db_subnets      = module.vpc.db_subnets
+  db_username     = var.db_username
+  db_password     = var.db_password
+  rds_kms_key_arn = module.kms.rds_kms_key_arn
 }
 
 module "key" {
@@ -48,6 +49,11 @@ module "key" {
   environment     = var.environment
   public_key_path = var.public_key_path
 }
+
+module "kms" {
+  source = "../modules/kms"
+}
+
 
 module "ssm" {
   source      = "../modules/ssm"
@@ -62,30 +68,32 @@ module "iam" {
 }
 
 module "ec2-web" {
-  source           = "../modules/ec2-web"
-  web_subnet_1a_id = module.vpc.web_subnet_1a_id
-  web_subnet_1b_id = module.vpc.web_subnet_1b_id
-  web_sg           = module.sg.web_sg
-  key_name         = module.key.key_name
-  instance_type    = var.instance_type
-  project_name     = var.project_name
-  environment      = var.environment
-  ami_id           = var.ami_id
-  app_alb_dns_name = module.alb-app.app_alb_dns_name
-  iam_instance_profile_name     = module.iam.ssm_instance_profile_name
+  source                    = "../modules/ec2-web"
+  web_subnet_1a_id          = module.vpc.web_subnet_1a_id
+  web_subnet_1b_id          = module.vpc.web_subnet_1b_id
+  web_sg                    = module.sg.web_sg
+  key_name                  = module.key.key_name
+  instance_type             = var.instance_type
+  project_name              = var.project_name
+  environment               = var.environment
+  ami_id                    = var.ami_id
+  app_alb_dns_name          = module.alb-app.app_alb_dns_name
+  iam_instance_profile_name = module.iam.ssm_instance_profile_name
+  ebs_kms_key_arn           = module.kms.ebs_kms_key_arn
 }
 
 module "ec2-app" {
-  source           = "../modules/ec2-app"
-  app_subnet_1a_id = module.vpc.app_subnet_1a_id
-  app_subnet_1b_id = module.vpc.app_subnet_1b_id
-  app_sg           = module.sg.app_sg
-  key_name         = module.key.key_name
-  instance_type    = var.instance_type
-  project_name     = var.project_name
-  environment      = var.environment
-  ami_id           = var.ami_id
-  iam_instance_profile_name     = module.iam.ssm_instance_profile_name
+  source                    = "../modules/ec2-app"
+  app_subnet_1a_id          = module.vpc.app_subnet_1a_id
+  app_subnet_1b_id          = module.vpc.app_subnet_1b_id
+  app_sg                    = module.sg.app_sg
+  key_name                  = module.key.key_name
+  instance_type             = var.instance_type
+  project_name              = var.project_name
+  environment               = var.environment
+  ami_id                    = var.ami_id
+  iam_instance_profile_name = module.iam.ssm_instance_profile_name
+  ebs_kms_key_arn           = module.kms.ebs_kms_key_arn
 }
 
 

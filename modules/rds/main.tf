@@ -18,10 +18,12 @@ resource "aws_db_instance" "db" {
   db_name                 = var.db_name
   multi_az                = true
   storage_type            = "gp3"
-  storage_encrypted       = false
+  storage_encrypted       = true
   publicly_accessible     = false
   skip_final_snapshot     = true
-  backup_retention_period = 0
+  backup_retention_period = 7
+
+  kms_key_id = var.rds_kms_key_arn
 
   vpc_security_group_ids = [var.db_sg]
 

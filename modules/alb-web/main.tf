@@ -13,10 +13,10 @@ resource "aws_lb" "web_alb" {
 }
 
 resource "aws_lb_target_group" "web_alb_tg" {
-  vpc_id   = var.vpc_id
-  name     = "web-alb-tg"
-  port     = 80
-  protocol = "HTTP"
+  vpc_id      = var.vpc_id
+  name        = "web-alb-tg"
+  port        = 80
+  protocol    = "HTTP"
   target_type = "instance"
 
   health_check {
