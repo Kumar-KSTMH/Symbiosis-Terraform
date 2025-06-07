@@ -6,7 +6,7 @@ Create an S3 bucket to store the .tfstate file in the remote backend
 
 **Warning!** It is highly recommended that you `enable Bucket Versioning` on the S3 bucket to allow for state recovery in the case of accidental deletions and human error.
 
-**Note**: We will need this bucket name in the later step
+**Note**: We will need this bucket name in the later step.
 
 ### Create a Dynamo DB table for state file locking
 - Give the table a name
@@ -24,7 +24,6 @@ ssh-keygen
 The above command asks for the key name and then gives `client_key` it will create a pair of keys one public and one private. you can give any name you want but then you need to edit the Terraform file
 
 Edit the below file according to your configuration
-root/b
 Add the below code in root/backend.tf
 
 terraform {
@@ -103,7 +102,7 @@ Step 4: Create Security Groups
 External-Load-Balancer-SG --> HTTP (80): 0.0.0.0/0.
 Web-SG --> HTTP --> Web-LB-SG.
 Internal-Load-Balancer-SG --> HTTP --> Web-SG.
-App-SG --> Port 4000 --> App-LB-SG.
+App-SG --> Port 3000 --> App-LB-SG.
 DB-SG --> MySQL (3306) --> App-SG.
 ---
 Step 5: Create DB Subnet Group & RDS
@@ -133,5 +132,5 @@ Step 9: Add External-ALB-DNS Record in Route 53
 Step 10: Create CloudWatch Alarms Along with SNS
 ---
 Step 11: Create CloudTrail
-
+----
 **Thank you so much for reading..😅**
