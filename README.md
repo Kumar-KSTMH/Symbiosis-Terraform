@@ -63,7 +63,7 @@ additional_domain_name = ""
 ## ✈️ Now we are ready to deploy our application on the cloud ⛅
 get into the project directory 
 ---
-cd symbiosis-iac\root
+cd Symbiosis-Terraform\root
 ---
 👉 let install dependency to deploy the application 
 
