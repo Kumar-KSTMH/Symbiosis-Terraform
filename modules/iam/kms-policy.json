@@ -1,0 +1,43 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowAccountRootAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::180294208375:root"
+      },
+      "Action": "kms:*",
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowEC2RoleAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::180294208375:role/iam-ssm-ec2-role"
+      },
+      "Action": [
+        "kms:CreateGrant",
+        "kms:Decrypt",
+        "kms:DescribeKey",
+        "kms:GenerateDataKeyWithoutPlainText",
+        "kms:ReEncrypt"
+      ],
+      "Resource": "*"
+    },
+    {
+  "Sid": "AllowAutoScalingServiceAccess",
+  "Effect": "Allow",
+  "Principal": {
+    "Service": "autoscaling.amazonaws.com"
+  },
+  "Action": [
+    "kms:CreateGrant",
+    "kms:DescribeKey"
+  ],
+  "Resource": "*"
+}
+
+  ]
+  
+}

@@ -1,3 +1,10 @@
+resource "aws_ssm_parameter" "db_name" {
+  name        = "/symbiosis/db/name"
+  type        = "SecureString"
+  value       = var.db_name
+  description = "RDS name for Symbiosis CRUD app"
+}
+
 resource "aws_ssm_parameter" "db_host" {
   name        = "/symbiosis/db/host"
   type        = "SecureString"

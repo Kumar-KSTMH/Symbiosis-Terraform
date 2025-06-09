@@ -2,13 +2,14 @@ variable "project_name" {}
 variable "web_subnet_1a_id" {}
 variable "web_subnet_1b_id" {}
 variable "web_alb_tg_arn" {}
-variable "web_launch_template" {
-  description = "Web tier launch template object"
-  type = object({
-    id             = string
-    latest_version = string
-  })
+variable "web_launch_template_id" {
+  type = string
 }
+
+variable "web_lt_version" {
+  type = string
+}
+
 
 variable "instance_type" {
   default = "t3.medium"

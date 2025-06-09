@@ -79,7 +79,7 @@ module "ec2-web" {
   ami_id                    = var.ami_id
   app_alb_dns_name          = module.alb-app.app_alb_dns_name
   iam_instance_profile_name = module.iam.ssm_instance_profile_name
-  ebs_kms_key_arn           = module.kms.ebs_kms_key_arn
+  depends_on                = [module.vpc.igw_id, module.alb-app]
 }
 
 module "ec2-app" {
@@ -93,32 +93,33 @@ module "ec2-app" {
   environment               = var.environment
   ami_id                    = var.ami_id
   iam_instance_profile_name = module.iam.ssm_instance_profile_name
-  ebs_kms_key_arn           = module.kms.ebs_kms_key_arn
+  depends_on                = [module.ngw]
 }
 
-
 module "asg-web" {
-  source              = "../modules/asg-web"
-  project_name        = var.project_name
-  web_launch_template = module.ec2-web.web_launch_template
-  web_alb_tg_arn      = module.alb-web.web_alb_tg_arn
-  web_subnet_1a_id    = module.vpc.web_subnet_1a_id
-  web_subnet_1b_id    = module.vpc.web_subnet_1b_id
-  min_size            = 2
-  max_size            = 4
-  desired_capacity    = 2
+  source                 = "../modules/asg-web"
+  project_name           = var.project_name
+  web_launch_template_id = module.ec2-web.web_launch_template.id
+  web_lt_version         = module.ec2-web.web_launch_template.latest_version
+  web_alb_tg_arn         = module.alb-web.web_alb_tg_arn
+  web_subnet_1a_id       = module.vpc.web_subnet_1a_id
+  web_subnet_1b_id       = module.vpc.web_subnet_1b_id
+  min_size               = 2
+  max_size               = 6
+  desired_capacity       = 2
 }
 
 module "asg-app" {
-  source              = "../modules/asg-app"
-  project_name        = var.project_name
-  app_launch_template = module.ec2-app.app_launch_template
-  app_alb_tg_arn      = module.alb-app.app_alb_tg_arn
-  app_subnet_1a_id    = module.vpc.app_subnet_1a_id
-  app_subnet_1b_id    = module.vpc.app_subnet_1b_id
-  min_size            = 2
-  max_size            = 4
-  desired_capacity    = 2
+  source                 = "../modules/asg-app"
+  project_name           = var.project_name
+  app_launch_template_id = module.ec2-app.app_launch_template.id
+  app_lt_version         = module.ec2-app.app_launch_template.latest_version
+  app_alb_tg_arn         = module.alb-app.app_alb_tg_arn
+  app_subnet_1a_id       = module.vpc.app_subnet_1a_id
+  app_subnet_1b_id       = module.vpc.app_subnet_1b_id
+  min_size               = 2
+  max_size               = 6
+  desired_capacity       = 2
 }
 
 # Creating external Application Load balancer
@@ -155,16 +156,16 @@ output "web_alb_dns_name" {
 module "cloudfront" {
   source = "../modules/cloudfront"
   certificate_domain_name = var.certificate_domain_name
-  alb_domain_name = module.alb.alb_dns_name
-  additional_domain_name = var.additional_domain_name
-  project_name = module.vpc.project_name
+  additional_domain_name  = var.additional_domain_name
+  project_name            = var.project_name
+  alb_domain_name         = module.web-alb.web_alb_dns_name
 }
-
+ 
 # Add record in route 53 hosted zone
 
 module "route53" {
   source = "../modules/route53"
-  cloudfront_domain_name = module.cloudfront.cloudfront_domain_name
+  cloudfront_domain_name    = module.cloudfront.cloudfront_domain_name
   cloudfront_hosted_zone_id = module.cloudfront.cloudfront_hosted_zone_id
 }
 */

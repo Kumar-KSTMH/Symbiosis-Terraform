@@ -20,8 +20,8 @@ resource "aws_autoscaling_group" "asg_app" {
   metrics_granularity = "1Minute"
 
   launch_template {
-    id      = var.app_launch_template.id
-    version = var.app_launch_template.latest_version
+    id      = var.app_launch_template_id
+    version = var.app_lt_version
   }
 }
 

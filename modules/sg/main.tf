@@ -50,7 +50,7 @@ resource "aws_security_group" "web_sg" {
   }
 
   ingress {
-    description     = "http access"
+    description     = "https access"
     from_port       = 443
     to_port         = 443
     protocol        = "tcp"
@@ -74,21 +74,13 @@ resource "aws_security_group" "web_sg" {
 
 resource "aws_security_group" "app_alb_sg" {
   name        = "app internal alb security group"
-  description = "enable http/https access on port 80/443"
+  description = "enable http access from web tier"
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "https access"
-    from_port       = 80
-    to_port         = 80
-    protocol        = "tcp"
-    security_groups = [aws_security_group.web_sg.id]
-  }
-
-  ingress {
-    description     = "https access"
-    from_port       = 443
-    to_port         = 443
+    description     = "app traffic"
+    from_port       = 3000
+    to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.web_sg.id]
   }
@@ -111,24 +103,17 @@ resource "aws_security_group" "app_alb_sg" {
 
 resource "aws_security_group" "app_sg" {
   name        = "app server security group"
-  description = "enable http/https access on port 80 for app sg"
+  description = "allow app traffic on port 3000 from ALB"
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "http access"
+    description     = "app traffic"
     from_port       = 3000
     to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.app_alb_sg.id]
   }
 
-  ingress {
-    description     = "https access"
-    from_port       = 443
-    to_port         = 443
-    protocol        = "tcp"
-    security_groups = [aws_security_group.app_alb_sg.id]
-  }
   egress {
     from_port   = 0
     to_port     = 0
