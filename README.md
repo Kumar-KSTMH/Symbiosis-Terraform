@@ -12,11 +12,9 @@ Create an S3 bucket to store the .tfstate file in the remote backend
 - Give the table a name
 - Make sure to add a `Partition key` with the name `LockID` and type as `String`
 
-### Generate a public-private key pair for our instances
+### Generate a public and private key pair for our instances
 We need a public key and a private key for our server so please follow the procedure I've included below.
-
 ---
-
 cd modules/key/
 ssh-keygen
 ---
@@ -24,7 +22,6 @@ ssh-keygen
 The above command asks for the key name and then gives `client_key` it will create a pair of keys one public and one private. you can give any name you want but then you need to edit the Terraform file
 
 Edit the below file according to your configuration
-root/b
 Add the below code in root/backend.tf
 
 terraform {
@@ -43,7 +40,6 @@ Go to AWS console --> AWS Certificate Manager (ACM) and make sure you have a val
 ### 👨‍💻 Route 53 Hosted Zone
 Go to AWS Console --> Route53 --> Hosted Zones and ensure you have a public hosted zone available, if not create one.
 ---
-
 Add the below content into the `root/dev.tfvars` file and add the values of each variable.
 
 ami_id           = ""
@@ -67,17 +63,6 @@ additional_domain_name = ""
 ## ✈️ Now we are ready to deploy our application on the cloud ⛅
 get into the project directory 
 ---
-
-cd symbiosis-iac\backend
----
-
-👉 let install dependency to deploy the backend 
-terraform init 
-Type the below command to see the plan of the execution 
-terraform plan
-Type `yes`, and it will prompt you for approval..
----
-
 cd symbiosis-iac\root
 ---
 👉 let install dependency to deploy the application 
@@ -88,12 +73,10 @@ terraform plan
 ✨Finally, HIT the below command to deploy the application...
 terraform apply 
 Type `yes`, and it will prompt you for approval..
-
 ---
 Step 1: Download Code from GitHub in Your Local System
 ---
 Step 2: Create IAM Role with Policies
-S3 read only.
 SSM managed instance core.
 ---
 Step 3: Create VPC, IGW, RT,Subnets, NAT-GW
@@ -103,7 +86,7 @@ Step 4: Create Security Groups
 External-Load-Balancer-SG --> HTTP (80): 0.0.0.0/0.
 Web-SG --> HTTP --> Web-LB-SG.
 Internal-Load-Balancer-SG --> HTTP --> Web-SG.
-App-SG --> Port 4000 --> App-LB-SG.
+App-SG --> Port 3000 --> App-LB-SG.
 DB-SG --> MySQL (3306) --> App-SG.
 ---
 Step 5: Create DB Subnet Group & RDS
@@ -118,7 +101,7 @@ Create launch template using AMI.
 Create target group.
 Create internal load balancer.
 Create autoscaling group.
-Edit nginx.conf file in local system by adding Internal-LB-DNS.
+Edit nginx.conf file in local system by adding Internal-app-LB-DNS.
 ---
 Step 7: Create Test Web Server, Install Packages (Nginx, Node.js), Test Connections
 Test Web-Server Commands
@@ -133,5 +116,5 @@ Step 9: Add External-ALB-DNS Record in Route 53
 Step 10: Create CloudWatch Alarms Along with SNS
 ---
 Step 11: Create CloudTrail
-
+---
 **Thank you so much for reading..😅**
